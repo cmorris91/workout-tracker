@@ -40,33 +40,35 @@ app.put('/api/workouts/:id', (req,res)=> {
       _id: mongojs.ObjectID(req.params._id)
     },
     {
-      $push: {
-        exercises: [
-          {
-            ...req.body
-            // type: req.body.type,
-            // name: req.body.name,
-            // duration: req.body.duration,
-            // weight: req.body.weight,
-            // reps: req.body.reps,
-            // sets: req.body.sets,
-            // distance: req.body.distance
-          }
-        ]
+    $push: {
+      exercises: [
+        {
+          ...req.body
+        }
+      ]}
+  }),
+    (err, data) => {
+      if(err) {
+        console.log(err);
+      } else {
+        res.json(data);
       }
-}),
-(err, data) => {
-  if(err) {
-    console.log(err);
-  } else {
-    res.json(data);
-  }
-} 
-})
+    } 
+});
 
 
 
 //post route for /api/workouts that inserts new workout to db
+app.post('/api/workouts', (req, res)=> {
+  db.Workout.create(req.body, (err, data) => {
+    if(err) {
+      console.log(err);
+    } else {
+      res.json(data);
+    }
+  })
+});
+
 
 // get route for /api/workouts/range ?
 app.listen(PORT, () => {
