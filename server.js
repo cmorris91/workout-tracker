@@ -35,25 +35,15 @@ app.get('/api/workouts', (req, res) => {
 
 //put route for /api/workouts/:id updates one workout in db
 app.put('/api/workouts/:id', (req,res)=> {
-  db.Workout.updateOne(
-    {
-      _id: mongojs.ObjectID(req.params._id)
-    },
-    {
-    $push: {
-      exercises: [
-        {
-          ...req.body
-        }
-      ]}
-  }),
+  console.log('test')
+  db.Workout.findByIdAndUpdate({ _id: mongojs.ObjectID(req.params._id)},
+    { $push: { exercises: [{ ...req.body}]}}, {new: true}),
     (err, data) => {
       if(err) {
         console.log(err);
       } else {
         res.json(data);
-      }
-    } 
+      }} 
 });
 
 
@@ -69,8 +59,15 @@ app.post('/api/workouts', (req, res)=> {
   })
 });
 
-
 // get route for /api/workouts/range ?
+// app.get('/api/workouts/range', (req,res)=> {
+//   db.Workout.aggregate([{
+//     $project: {
+//       $range: [0,7]
+//     } 
+//   }])
+
+// })
 app.listen(PORT, () => {
     console.log(`App running on port ${PORT}!`);
   });
