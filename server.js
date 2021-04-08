@@ -35,19 +35,18 @@ app.get('/api/workouts', (req, res) => {
 
 //put route for /api/workouts/:id updates one workout in db
 app.put('/api/workouts/:id', (req,res)=> {
-  console.log('test')
-  db.Workout.findByIdAndUpdate({ _id: mongojs.ObjectID(req.params._id)},
-    { $push: { exercises: [{ ...req.body}]}}, {new: true}),
-    (err, data) => {
-      if(err) {
-        console.log(err);
-      } else {
-        res.json(data);
-      }} 
+
+  db.Workout.findByIdAndUpdate(req.params.id,
+    { $push: { exercises: req.body}}, {new: true})
+    .then(dbWorkout => {
+      console.log(dbWorkout)
+        res.json(dbWorkout);
+      })
+      .catch(err => {
+        res.json(err);
+        console.log(err)
+      });
 });
-
-
-
 //post route for /api/workouts that inserts new workout to db
 app.post('/api/workouts', (req, res)=> {
   db.Workout.create(req.body, (err, data) => {
@@ -59,15 +58,20 @@ app.post('/api/workouts', (req, res)=> {
   })
 });
 
-// get route for /api/workouts/range ?
-// app.get('/api/workouts/range', (req,res)=> {
-//   db.Workout.aggregate([{
-//     $project: {
-//       $range: [0,7]
-//     } 
-//   }])
+//get route for /api/workouts/range ?
 
-// })
+app.get('/api/workouts/range', (req,res)=> {
+  db.Workout.find({}).sort({day:-1}).limit(7)
+  .then(dbWorkout => {
+    console.log(dbWorkout)
+      res.json(dbWorkout);
+    })
+    .catch(err => {
+      res.json(err);
+      console.log(err)
+    });
+})
+
 app.listen(PORT, () => {
     console.log(`App running on port ${PORT}!`);
   });
